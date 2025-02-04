@@ -1,0 +1,29 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<h1 class="heading">New Listing</h1>
+<div id="form">
+    <form method="post" action="{% url 'index' %}">
+        {% csrf_token %}
+        <input class="field" type="text" name="title" placeholder="Title" maxlength="64"> <br>
+        <textarea class="field" id="description" type="text" name="description" placeholder="Description" maxlength="1024"></textarea> <br>
+        <input class="field" type="number" name="bid" min="1" max="1000000" placeholder="Starting Bid"> <br>
+        <div id="dropdown-menu">
+            <a id="category-label">Category</a> 
+            <select class="field" id="category" name="category">
+                <option value="" disabled selected>None</option>
+                <option value="electronics">Electronics</option>
+                <option value="furniture">Furniture</option>
+                <option value="sport">Sport</option>
+                <option value="clothing">Clothing</option>
+                <option value="health">Health</option>
+                <option value="miscellaneous">Miscellaneous</option>
+            </select> <br>
+        </div> 
+        <input class="field" type="url" name="image" placeholder="Enter Image URL (optional)"> <br>
+        <input class="publish" type="submit" value="Publish">
+    </form>
+</div>
+
+{% endblock %}

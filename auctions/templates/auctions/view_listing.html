@@ -1,0 +1,102 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+
+<div id="view-page">
+    <div id="image-view" >
+        {% if listing.image_url %}
+            <img src="{{ listing.image_url }}">
+        {% else %}
+            <h1>Sorry! No Image Available</h1>
+        {% endif %}
+    </div>
+    <div id="text-view">
+        <div id="header-view">
+            <h1>{{ listing.title }}</h1> 
+            <div class="price-view">
+                <p>{{ listing.price }}$</p> 
+            </div>
+
+
+            {% if in_watchlist %}
+                <form id="watch-unwatch" action="{% url 'delete' listing.id %}" method="get">
+                    <button id="unwatch" type="submit">♡ Unwatch</button>
+                </form>
+            {% else %}
+                <form id="watch-unwatch" action="{% url 'add' listing.id %}" method="get">
+                    <button id="watch" type="submit">♥︎ Watch</button>
+                </form>
+            {% endif %}
+            
+        </div>
+        <p id="seller-view">Listing created by <b>{{ listing.owner }}</b> on {{ listing.date }}</p>
+        <p id="description-view">{{ listing.description }}</p>
+
+        {% if end_message %}
+            <div class="alert alert-success" id="end-message"><h3>{{ end_message }}</h3></div>
+
+        {% else %}
+            {% if highest_bid %}
+                <div class="price-view" id="highest-bid">
+                    <p>Current Highest Bid: <b>{{ highest_bid }}$</b>.</p><p id="bid-number">No. {{ num_bids }}</p>
+                </div>
+            {% else %}
+                <div class="price-view" id="highest-bid">
+                    <p>No Bids Placed.</p>
+                </div>
+            {% endif %}
+            {% if buyer %}
+                <form method="post" action="{% url 'bid' listing.id %}">
+                    {% csrf_token %}
+                    <input class="field" id="enter-bid" type="number" name="bid" min="1" max="1000000" placeholder="Enter Bid"> 
+                    <input class="publish" id="place-bid" type="submit" value="Place Bid">
+                </form>
+            {% else %}
+                <form action="{% url 'close' listing.id %}" method="get">
+                    <button class="publish" id="close-auction" type="submit">Close Auction</button>
+                </form>
+            {% endif %}
+        {% endif %}
+        
+        {% if messages %}
+            {% for message in messages %}
+            <div class="alert
+                {% if message.tags == 'error' %}
+                    alert-danger
+                {% elif message.tags == 'success' %}
+                    alert-success
+                {% endif %}
+                ">
+                <h3>{{ message }}</h3>
+            </div>
+            {% endfor %}
+        {% endif %}
+        
+        <div id="comment-section">
+            {% if not comments %}
+                <h4>Be the first one to leave a comment!</h4>
+            {% else %}
+                {% for comment in comments %}
+                    <div class="comment">
+                        <div class="comment-date">
+                            <p>{{ comment.date }}</p>
+                            <p>. {{ comment.commentator }}:</p> 
+                        </div>
+                        <p>{{ comment.text }}</p>
+                    </div>
+                {% endfor %}
+            {% endif %}
+
+            <form id="leave-comment" action="{% url 'comment' listing.id %}" method="post">
+                {% csrf_token %}
+                <textarea id="type-comment" type='text' name="text" placeholder="Your Comment"></textarea>
+                <input id="send-comment" type="submit" value="↑">
+            </form>
+        </div>
+
+
+    </div>
+</div>
+
+{% endblock %}

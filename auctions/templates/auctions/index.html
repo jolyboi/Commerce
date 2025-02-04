@@ -1,0 +1,53 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+
+{% block body %}
+    <!-- The Heading (Active Listins / Watchlist / Categories) -->
+    {% if watchlist_filter %}
+        <h2 class="heading">Your Watchlist</h2> <br>
+    {% endif %}
+
+    {% if categories_filter %}
+        <h2 class="heading">{{ category }}</h2> <br>
+    {% endif %}
+
+    {% if not watchlist_filter %}
+        {% if not categories_filter %}
+            <h2 class="heading">Active Listings</h2> <br>
+        {% endif %}
+    {% endif %}
+    
+    <div id="container">
+        {% for listing in listings %}
+            {% if not listing.ended or watchlist_filter %}
+                <div class="listing">  
+                    {% if listing.image_url %}
+                        <img class="image" src="{{ listing.image_url }}">
+                    {% else %}
+                        <img class="image" src="{% static 'auctions/default.jpg' %}">
+                    {% endif %}
+                    <h3>{{ listing.title }}</h3>
+                    <hr class="line">
+                    <p class="listing-text">{{ listing.description }}</p>
+                    <div class="line-footer">
+                        <hr>
+                        <p>{{ listing.get_category_display }}</p>
+                        <hr>
+                        <p>Seller: {{ listing.owner }}</p>
+                        <hr>
+                        <p class="price">Current Price: {{ listing.price }}$</p>
+                    </div>
+                    <form class="view" action="{% url 'view' listing.id %}" method="get">
+                        <button type="submit"><h5><b>View Listing</b></h5></button>
+                    </form>
+                </div>
+            {% endif %}
+        {% empty %}
+            <div></div>
+            <div id="no-listings">
+                <h3>No Listings Available</h3>
+            </div>
+        {% endfor %}
+    </div>
+
+{% endblock %}
